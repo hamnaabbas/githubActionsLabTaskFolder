@@ -8,14 +8,11 @@ function isValidEvent(event) {
     return { valid: false, message: "Invalid date format" };
   }
 
-  // Get today's date at midnight (ignore time)
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Also set eventDate time to midnight to compare only dates
   eventDate.setHours(0, 0, 0, 0);
 
-  // Reject past dates
   if (eventDate < today) {
     return { valid: false, message: "Event date cannot be in the past" };
   }
@@ -24,4 +21,5 @@ function isValidEvent(event) {
 }
 
 module.exports = { isValidEvent };
+
 
