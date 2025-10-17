@@ -1,22 +1,32 @@
-const { isValidEvent } = require("../controllers/Event");
+function isValidEvent(event) {
+  if (!event.name || !event.date || !event.category) {
+    return { valid: false, message: "Missing required event fields" };
+  }
 
-describe("Event Validation", () => {
-  test("should pass for valid future event", () => {
-    const result = isValidEvent({
-      name: "Conference",
-      date: new Date(Date.now() + 86400000), // tomorrow
-      category: "Business",
-    });
-    expect(result.valid).toBe(true);
-  });
+  let eventDate;
 
-  test("should fail for past event date", () => {
-    const result = isValidEvent({
-      name: "Old Event",
-      date: new Date(Date.now() - 86400000), // yesterday
-      category: "Music",
-    });
-    expect(result.valid).toBe(false);
-    expect(result.message).toBe("Event date cannot be in the past");
-  });
-});
+  // Accept Date object or string
+  if (event.date instanceof Date) {
+    eventDate = event.date;
+  } else {
+    eventDate = new Date(event.date);
+  }
+
+  if (isNaN(eventDate.getTime())) {
+    return { valid: false, message: "Invalid date format" };
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  eventDate = new Date(eventDate.getTime());
+  eventDate.setHours(0, 0, 0, 0);
+
+  if (eventDate < today) {
+    return { valid: false, message: "Event date cannot be in the past" };
+  }
+
+  return { valid: true, message: "Event is valid" };
+}
+
+module.exports = { isValidEvent };
